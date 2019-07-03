@@ -6,14 +6,18 @@ using UnityEngine.UI;
 public class Stat : MonoBehaviour
 {
 	private Image content;
+
 	[SerializeField]
 	private Text statValue;
+
 	[SerializeField]
 	private float lerpSpeed;
+
 	private float currentFill;
 	private float currentValue;
 
 	public float MyMaxValue { get; set; }
+
 	public float MyCurrentValue
 	{
 		get

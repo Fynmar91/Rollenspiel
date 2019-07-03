@@ -6,10 +6,25 @@ public class Player : Character
 {
 	[SerializeField]
 	private Stat health;
+
 	[SerializeField]
 	private Stat mana;
+
 	private float initHealth = 100f;
 	private float initMana = 100f;
+
+	[SerializeField]
+	private GameObject[] spellPrefab;
+
+	[SerializeField]
+	private Transform[] exitPoints;
+
+	private int exitIndex = 2;
+
+	[SerializeField]
+	private Block[] blocks;	
+
+	public Transform MyTarget { get; set; }
 
 	// Start is called before the first frame update
 	protected override void Start()
@@ -23,7 +38,7 @@ public class Player : Character
 	protected override void Update()
 	{
 		GetInput();
-		base.Update();
+		base.Update();		
 	}
 
 	private void GetInput()
@@ -46,34 +61,67 @@ public class Player : Character
 		if (Input.GetKey(KeyCode.W))
 		{
 			direction += Vector2.up;
+			exitIndex = 0;
 		}
 		if (Input.GetKey(KeyCode.A))
 		{
 			direction += Vector2.left;
+			exitIndex = 3;
 		}
 		if (Input.GetKey(KeyCode.S))
 		{
 			direction += Vector2.down;
+			exitIndex = 2;
 		}
 		if (Input.GetKey(KeyCode.D))
 		{
 			direction += Vector2.right;
+			exitIndex = 1;
 		}
-		if (Input.GetKeyDown(KeyCode.Space))
+		if (Input.GetKey(KeyCode.Space))
 		{
-			attackRoutine = StartCoroutine(Attack());
+			
 		}
 	}
 
-	private IEnumerator Attack()
+	private IEnumerator Attack(int spellIndex)
 	{
 		if (!isAttacking && !isMoving)
 		{
 			isAttacking = true;
 			myAnimator.SetBool("attack", isAttacking);
-			yield return new WaitForSeconds(3);
-			Debug.Log("Attack done");
+			yield return new WaitForSeconds(1);
+			Instantiate(spellPrefab[spellIndex], exitPoints[exitIndex].position, Quaternion.identity);
 			StopAttack();
 		}
+	}
+
+	public void CastSpell(int spellIndex)
+	{
+		Block();
+		if (MyTarget != null && !isAttacking && !isMoving && InLineOfSight())
+		{
+			attackRoutine = StartCoroutine(Attack(spellIndex));
+		}
+	}
+
+	private bool InLineOfSight()
+	{		
+		Vector3 targetDirection = (MyTarget.position - transform.position).normalized;
+		RaycastHit2D hit = Physics2D.Raycast(transform.position, targetDirection, Vector2.Distance(transform.position, MyTarget.position), 256);
+		if (hit.collider == null)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	private void Block()
+	{
+		foreach (Block b in blocks)
+		{
+			b.Deactivate();
+		}
+		blocks[exitIndex].Activate();
 	}
 }

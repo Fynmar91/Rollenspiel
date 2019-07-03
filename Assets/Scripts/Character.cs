@@ -6,11 +6,13 @@ public abstract class Character : MonoBehaviour
 {
 	[SerializeField]
 	private float speed = 5;
+
 	protected Vector2 direction;
 	private Rigidbody2D myRigidbody;
 	protected Animator myAnimator;
 	protected bool isAttacking = false;
 	protected Coroutine attackRoutine;
+
 	public bool isMoving
 	{
 		get
@@ -75,9 +77,8 @@ public abstract class Character : MonoBehaviour
 		if (isAttacking)
 		{
 			StopCoroutine(attackRoutine);
-			Debug.Log("Attack stopped");
 			isAttacking = false;
 			myAnimator.SetBool("attack", isAttacking);
-		}		
+		}
 	}
 }
