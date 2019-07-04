@@ -2,23 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
 public abstract class Character : MonoBehaviour
 {
 	[SerializeField]
 	private float speed = 5;
 
-	protected Vector2 direction;
+	[SerializeField]
+	protected Stat health;
+
+	[SerializeField]
+	protected Transform hitBox;
+
+	[SerializeField]
+	private float initHealth = 100f;
+
 	private Rigidbody2D myRigidbody;
+	protected Vector2 direction;
 	protected Animator myAnimator;
 	protected bool isAttacking = false;
 	protected Coroutine attackRoutine;
 
+	public Stat MyHealth
+	{
+		get { return health; }
+	}
+
 	public bool isMoving
 	{
-		get
-		{
-			return direction.x != 0 || direction.y != 0;
-		}
+		get	{return direction.x != 0 || direction.y != 0;}
 	}
 
 	// Start is called before the first frame update
@@ -26,6 +39,7 @@ public abstract class Character : MonoBehaviour
 	{
 		myRigidbody = GetComponent<Rigidbody2D>();
 		myAnimator = GetComponent<Animator>();
+		health.Initialize(initHealth, initHealth);
 	}
 
 	// Update is called once per frame
@@ -72,13 +86,23 @@ public abstract class Character : MonoBehaviour
 		myAnimator.SetLayerWeight(myAnimator.GetLayerIndex(layerName), 1);
 	}
 
-	public void StopAttack()
+	virtual public void StopAttack()
 	{
 		if (isAttacking)
 		{
 			StopCoroutine(attackRoutine);
 			isAttacking = false;
 			myAnimator.SetBool("attack", isAttacking);
+		}
+	}
+
+	public virtual void TakeDamage(float damage)
+	{
+		health.MyCurrentValue -= damage;
+
+		if (health.MyCurrentValue <= 0)
+		{
+			myAnimator.SetTrigger("die");
 		}
 	}
 }

@@ -7,7 +7,9 @@ public class GameManager : MonoBehaviour
 {
 	[SerializeField]
 	private Player player;
+
 	private Camera camera;
+	private NPC currentTarget;
 
 	// Start is called before the first frame update
 	void Start()
@@ -29,15 +31,26 @@ public class GameManager : MonoBehaviour
 
 			if (hit.collider != null)
 			{
-				if (hit.collider.tag == "Enemy")
+				if (currentTarget != null)
 				{
-					player.MyTarget = hit.transform;
+					currentTarget.Deselect();
 				}
+				currentTarget = hit.collider.GetComponent<NPC>();
+				player.MyTarget = currentTarget.Select();
+				UIManager.MyInstance.ShowTargetFrame(currentTarget);
+
 			}
 			else
 			{
+				if (currentTarget != null)
+				{
+					currentTarget.Deselect();
+				}
+				currentTarget = null;
 				player.MyTarget = null;
+				UIManager.MyInstance.HideTargetFrame();
 			}
+			
 		}
 	}
 }
