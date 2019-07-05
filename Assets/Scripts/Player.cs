@@ -39,7 +39,7 @@ public class Player : Character
 
 	private void GetInput()
 	{
-		direction = Vector2.zero;
+		MyDirection = Vector2.zero;
 
 		// DEBUG
 		if (Input.GetKeyDown(KeyCode.I))
@@ -56,22 +56,22 @@ public class Player : Character
 
 		if (Input.GetKey(KeyCode.W))
 		{
-			direction += Vector2.up;
+			MyDirection += Vector2.up;
 			exitIndex = 0;
 		}
 		if (Input.GetKey(KeyCode.A))
 		{
-			direction += Vector2.left;
+			MyDirection += Vector2.left;
 			exitIndex = 3;
 		}
 		if (Input.GetKey(KeyCode.S))
 		{
-			direction += Vector2.down;
+			MyDirection += Vector2.down;
 			exitIndex = 2;
 		}
 		if (Input.GetKey(KeyCode.D))
 		{
-			direction += Vector2.right;
+			MyDirection += Vector2.right;
 			exitIndex = 1;
 		}
 	}
@@ -84,19 +84,53 @@ public class Player : Character
 
 	public void CastSpell(int spellIndex)
 	{
-		Block();
 		if (MyTarget != null && !isAttacking && !isMoving && InLineOfSight(MyTarget))
 		{
+			TurnPlayer();
 			attackRoutine = StartCoroutine(Attack(spellIndex));
+			HandleLayers();
 		}
+	}
+
+	private void TurnPlayer()
+	{
+		if (Mathf.Abs((MyTarget.transform.position - transform.position).normalized.y) > Mathf.Abs((MyTarget.transform.position - transform.position).normalized.x))
+		{
+			if (Vector2.Dot(transform.TransformDirection(Vector2.up), MyTarget.position) > 0)
+			{
+				exitIndex = 0;
+			}
+			else if (Vector2.Dot(transform.TransformDirection(Vector2.up), MyTarget.position) < 0)
+			{
+				exitIndex = 2;
+			}
+		}
+		else
+		{
+			if (Vector2.Dot(transform.TransformDirection(Vector2.right), MyTarget.position) > 0)
+			{
+				exitIndex = 1;
+			}
+			else if (Vector2.Dot(transform.TransformDirection(Vector2.right), MyTarget.position) < 0)
+			{
+				exitIndex = 3;
+			}
+		}
+		MyDirection = (MyTarget.transform.position - transform.position).normalized;
+		myAnimator.SetFloat("x", MyDirection.x);
+		myAnimator.SetFloat("y", MyDirection.y);
+		MyDirection = Vector2.zero;
 	}
 
 	private IEnumerator Attack(int spellIndex)
 	{
 		Transform currentTarget = MyTarget;
 		Spell newSpell = spellBook.CastSpell(spellIndex);
+		float animatorSpeed = myAnimator.speed;
 
 		isAttacking = true;
+		myAnimator.speed = 2 / newSpell.MyCastTime;
+
 		myAnimator.SetBool("attack", isAttacking);
 		yield return new WaitForSeconds(newSpell.MyCastTime);
 		if (currentTarget != null && InLineOfSight(currentTarget))
@@ -104,9 +138,9 @@ public class Player : Character
 			SpellScript s = Instantiate(newSpell.MySpellPrefab, exitPoints[exitIndex].position, Quaternion.identity).GetComponent<SpellScript>();
 			s.Initialize(currentTarget, newSpell.MyDamage, newSpell.MySpeed);
 		}
+		myAnimator.speed = animatorSpeed;
 		StopAttack();
-
-	}	
+	}
 
 	private bool InLineOfSight(Transform currentTarget)
 	{

@@ -7,7 +7,7 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour
 {
 	[SerializeField]
-	protected float speed = 5;
+	private float speed;
 
 	[SerializeField]
 	protected Stat health;
@@ -19,10 +19,11 @@ public abstract class Character : MonoBehaviour
 	private float initHealth = 100f;
 
 	private Rigidbody2D myRigidbody;
-	protected Vector2 direction;
 	protected Animator myAnimator;
 	protected bool isAttacking = false;
 	protected Coroutine attackRoutine;
+
+	private Vector2 direction;
 
 	public Stat MyHealth
 	{
@@ -33,6 +34,10 @@ public abstract class Character : MonoBehaviour
 	{
 		get	{return direction.x != 0 || direction.y != 0;}
 	}
+
+	public Vector2 MyDirection { get => direction; set => direction = value; }
+
+	public float MySpeed { get => speed; set => speed = value; }
 
 	// Start is called before the first frame update
 	protected virtual void Start()
@@ -55,7 +60,7 @@ public abstract class Character : MonoBehaviour
 
 	public void Move()
 	{
-		myRigidbody.velocity = direction.normalized * speed;
+		myRigidbody.velocity = MyDirection.normalized * MySpeed;
 	}
 
 	public void HandleLayers()
@@ -64,13 +69,13 @@ public abstract class Character : MonoBehaviour
 		{
 			StopAttack();
 			ActivateLayer("WalkLayer");
-			myAnimator.SetFloat("x", direction.x);
-			myAnimator.SetFloat("y", direction.y);
+			myAnimator.SetFloat("x", MyDirection.x);
+			myAnimator.SetFloat("y", MyDirection.y);
 		}
 		else if (isAttacking)
 		{
 			ActivateLayer("AttackLayer");
-		}	
+		}
 		else
 		{
 			ActivateLayer("IdleLayer");
@@ -103,6 +108,7 @@ public abstract class Character : MonoBehaviour
 		if (health.MyCurrentValue <= 0)
 		{
 			myAnimator.SetTrigger("die");
+			ActivateLayer("DeathLayer");
 		}
 	}
 }
