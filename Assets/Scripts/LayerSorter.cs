@@ -25,7 +25,8 @@ public class LayerSorter : MonoBehaviour
 		{
 			Obstacle o = collision.GetComponent<Obstacle>();
 			o.FadeOut();
-			if (obstacles.Count == 0 || o.MySpriteRenderer.sortingOrder - 1 < parentRenderer.sortingOrder)
+
+			if (o.MySpriteRenderer != null && (obstacles.Count == 0 || o.MySpriteRenderer.sortingOrder - 1 < parentRenderer.sortingOrder))
 			{
 				parentRenderer.sortingOrder = o.MySpriteRenderer.sortingOrder - 1;
 			}

@@ -4,6 +4,12 @@ using UnityEngine;
 using System;
 using UnityEngine.U2D;
 
+
+//
+// OLD
+// NOT BEING USED
+//
+
 public class LevelManager : MonoBehaviour
 {
 	[SerializeField]
