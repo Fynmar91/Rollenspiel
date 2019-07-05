@@ -74,6 +74,10 @@ public class Player : Character
 			MyDirection += Vector2.right;
 			exitIndex = 1;
 		}
+		if (isMoving)
+		{
+			StopAttack();
+		}
 	}
 
 	public void SetLimits(Vector3 min, Vector3 max)
@@ -162,9 +166,15 @@ public class Player : Character
 		blocks[exitIndex].Activate();
 	}
 
-	public override void StopAttack()
+	public void StopAttack()
 	{
-		base.StopAttack();
 		spellBook.StopCasting();
+		isAttacking = false;
+		myAnimator.SetBool("attack", isAttacking);
+
+		if (attackRoutine != null)
+		{
+			StopCoroutine(attackRoutine);
+		}
 	}
 }

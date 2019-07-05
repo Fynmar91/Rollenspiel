@@ -33,6 +33,10 @@ public class Obstacle : MonoBehaviour, IComparable<Obstacle>
 	void Start()
 	{
 		MySpriteRenderer = GetComponent<SpriteRenderer>();
+		if (MySpriteRenderer == null)
+		{
+			MySpriteRenderer = GetComponentInParent<SpriteRenderer>();
+		}
 		defaultColor = MySpriteRenderer.color;
 		currentColor = MySpriteRenderer.color;
 		fadedColor = defaultColor;

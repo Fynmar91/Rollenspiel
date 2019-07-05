@@ -13,8 +13,11 @@ public class Enemy : NPC
 
 	public Transform MyTarget { get => target; set => target = value; }
 
+	public float MyAttackRange { get; set; }
+
 	protected void Awake()
 	{
+		MyAttackRange = 1;
 		ChangeState(new IdleState());
 	}
 
