@@ -269,13 +269,12 @@ public class WaterTile : Tile
 	[MenuItem("Assets/Create/Tiles/WaterTile")]
 	public static void CreateWaterTile()
 	{
-		string path = EditorUtility.SaveFilePanelInProject("Save Watertile", "New Watertile", "asset", "Save watertile", "Assets");
+		string path = EditorUtility.SaveFilePanelInProject("Save WaterTile", "New WaterTile", "asset", "Save WaterTile", "Assets");
 		if (path == "")
 		{
 			return;
 		}
 		AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<WaterTile>(), path);
 	}
-
 #endif
 }
