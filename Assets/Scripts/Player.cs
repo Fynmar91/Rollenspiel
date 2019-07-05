@@ -17,6 +17,8 @@ public class Player : Character
 	private SpellBook spellBook;
 	private float initMana = 100f;
 
+	private Vector3 min, max;
+
 	public Transform MyTarget { get; set; }
 
 	// Start is called before the first frame update
@@ -31,6 +33,7 @@ public class Player : Character
 	protected override void Update()
 	{
 		GetInput();
+		transform.position = new Vector3(Mathf.Clamp(transform.position.x, min.x, max.x), Mathf.Clamp(transform.position.y, min.y, max.y), transform.position.z);
 		base.Update();
 	}
 
@@ -71,6 +74,12 @@ public class Player : Character
 			direction += Vector2.right;
 			exitIndex = 1;
 		}
+	}
+
+	public void SetLimits(Vector3 min, Vector3 max)
+	{
+		this.min = min;
+		this.max = max;
 	}
 
 	public void CastSpell(int spellIndex)
