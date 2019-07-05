@@ -12,11 +12,12 @@ public class TreeTile : Tile
 		{
 			go.GetComponent<SpriteRenderer>().sortingOrder = -position.y * 2;
 
-			UnityEngine.Random.seed = position.x * position.y + 100;
-			float shade = UnityEngine.Random.Range(0.8f, 1.0f);
-			float scale = UnityEngine.Random.Range(0.7f, 1.0f);
+			UnityEngine.Random.seed = position.x * position.y * 100;
+			float green = UnityEngine.Random.Range(0.7f, 1.0f);
+			float blue = UnityEngine.Random.Range(0.8f, 1.0f);
+			float scale = UnityEngine.Random.Range(0.6f, 1.0f);
 
-			go.GetComponent<SpriteRenderer>().color = new Color(shade, shade, shade, 1);
+			go.GetComponent<SpriteRenderer>().color = new Color(1, green, blue, 1);
 			go.transform.localScale = new Vector3(scale, scale, scale);
 		}		
 
