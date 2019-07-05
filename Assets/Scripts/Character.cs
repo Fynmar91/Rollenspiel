@@ -7,7 +7,7 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour
 {
 	[SerializeField]
-	private float speed = 5;
+	protected float speed = 5;
 
 	[SerializeField]
 	protected Stat health;
