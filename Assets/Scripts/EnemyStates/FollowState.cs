@@ -37,7 +37,5 @@ class FollowState : IState
 		{
 			parent.ChangeState(new IdleState());
 		}
-		
 	}
-
 }

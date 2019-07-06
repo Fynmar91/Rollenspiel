@@ -41,6 +41,11 @@ public abstract class Character : MonoBehaviour
 
 	public float MySpeed { get => speed; set => speed = value; }
 
+	public bool IsAlive
+	{
+		get { return MyHealth.MyCurrentValue > 0; }
+	}
+
 	// Start is called before the first frame update
 	protected virtual void Start()
 	{
@@ -62,24 +67,35 @@ public abstract class Character : MonoBehaviour
 
 	public void Move()
 	{
-		myRigidbody.velocity = MyDirection.normalized * MySpeed;
+		if (IsAlive)
+		{
+			myRigidbody.velocity = MyDirection.normalized * MySpeed;
+		}
+		
 	}
 
 	public void HandleLayers()
 	{
-		if (isMoving)
+		if (IsAlive)
 		{
-			ActivateLayer("WalkLayer");
-			MyAnimator.SetFloat("x", MyDirection.x);
-			MyAnimator.SetFloat("y", MyDirection.y);
-		}
-		else if (IsAttacking)
-		{
-			ActivateLayer("AttackLayer");
-		}
+			if (isMoving)
+			{
+				ActivateLayer("WalkLayer");
+				MyAnimator.SetFloat("x", MyDirection.x);
+				MyAnimator.SetFloat("y", MyDirection.y);
+			}
+			else if (IsAttacking)
+			{
+				ActivateLayer("AttackLayer");
+			}
+			else
+			{
+				ActivateLayer("IdleLayer");
+			}
+		}		
 		else
 		{
-			ActivateLayer("IdleLayer");
+			ActivateLayer("DeathLayer");
 		}
 	}
 
@@ -100,8 +116,9 @@ public abstract class Character : MonoBehaviour
 
 		if (health.MyCurrentValue <= 0)
 		{
+			MyDirection = Vector2.zero;
+			myRigidbody.velocity = MyDirection;
 			MyAnimator.SetTrigger("die");
-			ActivateLayer("DeathLayer");
 		}
 	}
 }
