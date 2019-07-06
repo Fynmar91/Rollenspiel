@@ -10,11 +10,11 @@ public class AttackSourceBehaviour : StateMachineBehaviour
 		int x = Mathf.RoundToInt(animator.GetFloat("x"));
 		int y = Mathf.RoundToInt(animator.GetFloat("y"));
 
-		if (x == 0 && y == -1)
+		if (x == 0 && y == -1 || x == 1 && y == -1 || x == -1 && y == -1)
 		{
 			animator.GetComponent<Player>().MyExitIndex = 2;
 		}
-		else if (x == 0 && y == 1)
+		else if (x == 0 && y == 1 || x == 1 && y == 1 || x == -1 && y == -1)
 		{
 			animator.GetComponent<Player>().MyExitIndex = 0;
 		}

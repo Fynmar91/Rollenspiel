@@ -112,10 +112,6 @@ public abstract class Character : MonoBehaviour
 
 	public virtual void TakeDamage(float damage, Transform source)
 	{
-		if (MyTarget == null)
-		{
-			MyTarget = source;
-		}
 		health.MyCurrentValue -= damage;
 
 		if (health.MyCurrentValue <= 0)

@@ -101,8 +101,8 @@ public class Player : Character
 	private void TurnPlayer()
 	{
 		MyDirection = (MyTarget.transform.position - transform.position).normalized;
-		MyAnimator.SetFloat("x", MyDirection.x);
-		MyAnimator.SetFloat("y", MyDirection.y);
+		MyAnimator.SetFloat("x", Mathf.RoundToInt(MyDirection.x));
+		MyAnimator.SetFloat("y", Mathf.RoundToInt(MyDirection.y));
 		MyDirection = Vector2.zero;
 	}
 
