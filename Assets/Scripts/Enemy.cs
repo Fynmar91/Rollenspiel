@@ -15,14 +15,21 @@ public class Enemy : NPC
 
 	public float MyAttackRange { get; set; }
 
+	public float MyAttackTime { get; set; }
+
 	protected void Awake()
 	{
-		MyAttackRange = 1;
+		MyAttackRange = 1.0f;
 		ChangeState(new IdleState());
 	}
 
 	protected override void Update()
 	{
+		if (!IsAttacking)
+		{
+			MyAttackTime += Time.deltaTime;
+		}
+
 		currentState.Update();
 		base.Update();
 	}

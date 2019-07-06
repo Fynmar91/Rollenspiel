@@ -19,8 +19,6 @@ public abstract class Character : MonoBehaviour
 	private float initHealth = 100f;
 
 	private Rigidbody2D myRigidbody;
-	protected Animator myAnimator;
-	protected bool isAttacking = false;
 	protected Coroutine attackRoutine;
 
 	private Vector2 direction;
@@ -35,6 +33,10 @@ public abstract class Character : MonoBehaviour
 		get	{return direction.x != 0 || direction.y != 0;}
 	}
 
+	public Animator MyAnimator { get; set; }
+
+	public bool IsAttacking { get; set; }
+
 	public Vector2 MyDirection { get => direction; set => direction = value; }
 
 	public float MySpeed { get => speed; set => speed = value; }
@@ -43,7 +45,7 @@ public abstract class Character : MonoBehaviour
 	protected virtual void Start()
 	{
 		myRigidbody = GetComponent<Rigidbody2D>();
-		myAnimator = GetComponent<Animator>();
+		MyAnimator = GetComponent<Animator>();
 		health.Initialize(initHealth, initHealth);
 	}
 
@@ -68,10 +70,10 @@ public abstract class Character : MonoBehaviour
 		if (isMoving)
 		{
 			ActivateLayer("WalkLayer");
-			myAnimator.SetFloat("x", MyDirection.x);
-			myAnimator.SetFloat("y", MyDirection.y);
+			MyAnimator.SetFloat("x", MyDirection.x);
+			MyAnimator.SetFloat("y", MyDirection.y);
 		}
-		else if (isAttacking)
+		else if (IsAttacking)
 		{
 			ActivateLayer("AttackLayer");
 		}
@@ -83,11 +85,11 @@ public abstract class Character : MonoBehaviour
 
 	public void ActivateLayer(string layerName)
 	{
-		for (int i = 0; i < myAnimator.layerCount; i++)
+		for (int i = 0; i < MyAnimator.layerCount; i++)
 		{
-			myAnimator.SetLayerWeight(i, 0);
+			MyAnimator.SetLayerWeight(i, 0);
 		}
-		myAnimator.SetLayerWeight(myAnimator.GetLayerIndex(layerName), 1);
+		MyAnimator.SetLayerWeight(MyAnimator.GetLayerIndex(layerName), 1);
 	}
 
 
@@ -98,7 +100,7 @@ public abstract class Character : MonoBehaviour
 
 		if (health.MyCurrentValue <= 0)
 		{
-			myAnimator.SetTrigger("die");
+			MyAnimator.SetTrigger("die");
 			ActivateLayer("DeathLayer");
 		}
 	}

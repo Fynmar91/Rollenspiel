@@ -88,7 +88,7 @@ public class Player : Character
 
 	public void CastSpell(int spellIndex)
 	{
-		if (MyTarget != null && !isAttacking && !isMoving && InLineOfSight(MyTarget))
+		if (MyTarget != null && !IsAttacking && !isMoving && InLineOfSight(MyTarget))
 		{
 			TurnPlayer();
 			attackRoutine = StartCoroutine(Attack(spellIndex));
@@ -121,8 +121,8 @@ public class Player : Character
 			}
 		}
 		MyDirection = (MyTarget.transform.position - transform.position).normalized;
-		myAnimator.SetFloat("x", MyDirection.x);
-		myAnimator.SetFloat("y", MyDirection.y);
+		MyAnimator.SetFloat("x", MyDirection.x);
+		MyAnimator.SetFloat("y", MyDirection.y);
 		MyDirection = Vector2.zero;
 	}
 
@@ -130,19 +130,19 @@ public class Player : Character
 	{
 		Transform currentTarget = MyTarget;
 		Spell newSpell = spellBook.CastSpell(spellIndex);
-		float animatorSpeed = myAnimator.speed;
+		float animatorSpeed = MyAnimator.speed;
 
-		isAttacking = true;
-		myAnimator.speed = 2 / newSpell.MyCastTime;
+		IsAttacking = true;
+		MyAnimator.speed = 2 / newSpell.MyCastTime;
 
-		myAnimator.SetBool("attack", isAttacking);
+		MyAnimator.SetBool("attack", IsAttacking);
 		yield return new WaitForSeconds(newSpell.MyCastTime);
 		if (currentTarget != null && InLineOfSight(currentTarget))
 		{
 			SpellScript s = Instantiate(newSpell.MySpellPrefab, exitPoints[exitIndex].position, Quaternion.identity).GetComponent<SpellScript>();
 			s.Initialize(currentTarget, newSpell.MyDamage, newSpell.MySpeed);
 		}
-		myAnimator.speed = animatorSpeed;
+		MyAnimator.speed = animatorSpeed;
 		StopAttack();
 	}
 
@@ -169,8 +169,8 @@ public class Player : Character
 	public void StopAttack()
 	{
 		spellBook.StopCasting();
-		isAttacking = false;
-		myAnimator.SetBool("attack", isAttacking);
+		IsAttacking = false;
+		MyAnimator.SetBool("attack", IsAttacking);
 
 		if (attackRoutine != null)
 		{
