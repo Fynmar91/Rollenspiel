@@ -5,8 +5,11 @@ using UnityEngine;
 public class SpellScript : MonoBehaviour
 {
 	private Rigidbody2D myRigidbody;
+	private Transform source;
 	private float speed;
 	private int damage;
+	private float maxLifetime = 1.0f;
+	private float aliveTime = 0;
 
 	public Transform MyTarget { get; private set; }
 
@@ -17,11 +20,12 @@ public class SpellScript : MonoBehaviour
 		myRigidbody = GetComponent<Rigidbody2D>();
 	}
 
-	public void Initialize(Transform target, int damage, float speed)
+	public void Initialize(Transform target, int damage, float speed, Transform source)
 	{
 		this.MyTarget = target;
 		this.damage = damage;
 		this.speed = speed;
+		this.source = source;
 	}
 
 	// Update is called once per frame
@@ -42,6 +46,15 @@ public class SpellScript : MonoBehaviour
 
 			transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 		}
+		else
+		{
+			aliveTime += Time.deltaTime;
+			if (aliveTime > maxLifetime)
+			{
+				GetComponent<Animator>().SetTrigger("impact");
+				myRigidbody.velocity = Vector2.zero;
+			}
+		}
 		
 	}
 
@@ -49,8 +62,9 @@ public class SpellScript : MonoBehaviour
 	{
 		if (collision.tag == "HitBox" && collision.transform == MyTarget)
 		{
+			Character c = collision.GetComponentInParent<Character>();
 			speed = 0;
-			collision.GetComponentInParent<Enemy>().TakeDamage(damage);
+			c.TakeDamage(damage, source);
 			GetComponent<Animator>().SetTrigger("impact");
 			myRigidbody.velocity = Vector2.zero;
 			MyTarget = null;

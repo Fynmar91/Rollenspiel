@@ -36,6 +36,7 @@ public class WaterTile : Tile
 	public override void GetTileData(Vector3Int location, ITilemap tilemap, ref TileData tileData)
 	{
 		string composition = string.Empty;
+		base.GetTileData(location, tilemap, ref tileData);
 
 		for (int x = -1; x <= 1; x++)
 		{

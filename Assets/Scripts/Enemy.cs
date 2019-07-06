@@ -9,10 +9,6 @@ public class Enemy : NPC
 
 	private IState currentState;
 
-	private Transform target;
-
-	public Transform MyTarget { get => target; set => target = value; }
-
 	public float MyAttackRange { get; set; }
 
 	public float MyAttackTime { get; set; }
@@ -49,9 +45,9 @@ public class Enemy : NPC
 		healthGroup.alpha = 0;
 	}
 
-	public override void TakeDamage(float damage)
+	public override void TakeDamage(float damage, Transform source)
 	{
-		base.TakeDamage(damage);
+		base.TakeDamage(damage, source);
 		OnHealthChanged(health.MyCurrentValue);
 	}
 

@@ -21,12 +21,14 @@ public abstract class Character : MonoBehaviour
 	private Rigidbody2D myRigidbody;
 	protected Coroutine attackRoutine;
 
-	private Vector2 direction;
+	public Transform MyTarget { get; set; }
 
 	public Stat MyHealth
 	{
 		get { return health; }
 	}
+
+	private Vector2 direction;
 
 	public bool isMoving
 	{
@@ -108,10 +110,12 @@ public abstract class Character : MonoBehaviour
 		MyAnimator.SetLayerWeight(MyAnimator.GetLayerIndex(layerName), 1);
 	}
 
-
-
-	public virtual void TakeDamage(float damage)
+	public virtual void TakeDamage(float damage, Transform source)
 	{
+		if (MyTarget == null)
+		{
+			MyTarget = source;
+		}
 		health.MyCurrentValue -= damage;
 
 		if (health.MyCurrentValue <= 0)

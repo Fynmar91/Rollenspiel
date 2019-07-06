@@ -13,18 +13,18 @@ public class Player : Character
 	[SerializeField]
 	private Block[] blocks;
 
-	private int exitIndex = 2;
 	private SpellBook spellBook;
 	private float initMana = 100f;
 
 	private Vector3 min, max;
 
-	public Transform MyTarget { get; set; }
+	public int MyExitIndex { get; set; }
 
 	// Start is called before the first frame update
 	protected override void Start()
 	{
 		base.Start();
+		MyExitIndex = 2;
 		mana.Initialize(initMana, initMana);
 		spellBook = GetComponent<SpellBook>();
 	}
@@ -57,22 +57,22 @@ public class Player : Character
 		if (Input.GetKey(KeyCode.W))
 		{
 			MyDirection += Vector2.up;
-			exitIndex = 0;
+			//MyExitIndex = 0;
 		}
 		if (Input.GetKey(KeyCode.A))
 		{
 			MyDirection += Vector2.left;
-			exitIndex = 3;
+			//MyExitIndex = 3;
 		}
 		if (Input.GetKey(KeyCode.S))
 		{
 			MyDirection += Vector2.down;
-			exitIndex = 2;
+			//MyExitIndex = 2;
 		}
 		if (Input.GetKey(KeyCode.D))
 		{
 			MyDirection += Vector2.right;
-			exitIndex = 1;
+			//MyExitIndex = 1;
 		}
 		if (isMoving)
 		{
@@ -88,9 +88,11 @@ public class Player : Character
 
 	public void CastSpell(int spellIndex)
 	{
-		if (MyTarget != null && !IsAttacking && !isMoving && InLineOfSight(MyTarget))
+		if (MyTarget != null && MyTarget.GetComponentInParent<Character>().IsAlive && !IsAttacking && !isMoving && InLineOfSight(MyTarget))
 		{
+			IsAttacking = true;
 			TurnPlayer();
+			MyAnimator.SetBool("attack", IsAttacking);
 			attackRoutine = StartCoroutine(Attack(spellIndex));
 			HandleLayers();
 		}
@@ -98,28 +100,6 @@ public class Player : Character
 
 	private void TurnPlayer()
 	{
-		if (Mathf.Abs((MyTarget.transform.position - transform.position).normalized.y) > Mathf.Abs((MyTarget.transform.position - transform.position).normalized.x))
-		{
-			if (Vector2.Dot(transform.TransformDirection(Vector2.up), MyTarget.position) > 0)
-			{
-				exitIndex = 0;
-			}
-			else if (Vector2.Dot(transform.TransformDirection(Vector2.up), MyTarget.position) < 0)
-			{
-				exitIndex = 2;
-			}
-		}
-		else
-		{
-			if (Vector2.Dot(transform.TransformDirection(Vector2.right), MyTarget.position) > 0)
-			{
-				exitIndex = 1;
-			}
-			else if (Vector2.Dot(transform.TransformDirection(Vector2.right), MyTarget.position) < 0)
-			{
-				exitIndex = 3;
-			}
-		}
 		MyDirection = (MyTarget.transform.position - transform.position).normalized;
 		MyAnimator.SetFloat("x", MyDirection.x);
 		MyAnimator.SetFloat("y", MyDirection.y);
@@ -132,15 +112,14 @@ public class Player : Character
 		Spell newSpell = spellBook.CastSpell(spellIndex);
 		float animatorSpeed = MyAnimator.speed;
 
-		IsAttacking = true;
 		MyAnimator.speed = 2 / newSpell.MyCastTime;
-
-		MyAnimator.SetBool("attack", IsAttacking);
+		
 		yield return new WaitForSeconds(newSpell.MyCastTime);
+
 		if (currentTarget != null && InLineOfSight(currentTarget))
 		{
-			SpellScript s = Instantiate(newSpell.MySpellPrefab, exitPoints[exitIndex].position, Quaternion.identity).GetComponent<SpellScript>();
-			s.Initialize(currentTarget, newSpell.MyDamage, newSpell.MySpeed);
+			SpellScript s = Instantiate(newSpell.MySpellPrefab, exitPoints[MyExitIndex].position, Quaternion.identity).GetComponent<SpellScript>();
+			s.Initialize(currentTarget, newSpell.MyDamage, newSpell.MySpeed, transform);
 		}
 		MyAnimator.speed = animatorSpeed;
 		StopAttack();
@@ -163,7 +142,7 @@ public class Player : Character
 		{
 			b.Deactivate();
 		}
-		blocks[exitIndex].Activate();
+		blocks[MyExitIndex].Activate();
 	}
 
 	public void StopAttack()
