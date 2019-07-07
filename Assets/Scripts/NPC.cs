@@ -14,7 +14,11 @@ public class NPC : Character
 	public event CharacterRemoved characterRemoved;
 
 	public Sprite MyPortrait { get => portrait; }
-	
+
+	protected override void FixedUpdate()
+	{
+
+	}
 
 	public virtual Transform Select()
 	{

@@ -18,7 +18,7 @@ public abstract class Character : MonoBehaviour
 	[SerializeField]
 	private float initHealth = 100f;
 
-	private Rigidbody2D myRigidbody;
+	private Rigidbody2D rigidbody;
 	protected Coroutine attackRoutine;
 
 	public Transform MyTarget { get; set; }
@@ -51,7 +51,7 @@ public abstract class Character : MonoBehaviour
 	// Start is called before the first frame update
 	protected virtual void Start()
 	{
-		myRigidbody = GetComponent<Rigidbody2D>();
+		rigidbody = GetComponent<Rigidbody2D>();
 		MyAnimator = GetComponent<Animator>();
 		health.Initialize(initHealth, initHealth);
 	}
@@ -62,7 +62,7 @@ public abstract class Character : MonoBehaviour
 		HandleLayers();
 	}
 
-	private void FixedUpdate()
+	protected virtual void FixedUpdate()
 	{
 		Move();
 	}
@@ -71,7 +71,7 @@ public abstract class Character : MonoBehaviour
 	{
 		if (IsAlive)
 		{
-			myRigidbody.velocity = MyDirection.normalized * MySpeed;
+			rigidbody.velocity = MyDirection.normalized * MySpeed;
 		}
 		
 	}
@@ -117,7 +117,7 @@ public abstract class Character : MonoBehaviour
 		if (health.MyCurrentValue <= 0)
 		{
 			MyDirection = Vector2.zero;
-			myRigidbody.velocity = MyDirection;
+			rigidbody.velocity = MyDirection;
 			MyAnimator.SetTrigger("die");
 		}
 	}
