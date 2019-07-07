@@ -7,7 +7,7 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour
 {
 	[SerializeField]
-	private float speed;
+	private float initSpeed;
 
 	[SerializeField]
 	protected Stat health;
@@ -18,8 +18,11 @@ public abstract class Character : MonoBehaviour
 	[SerializeField]
 	private float initHealth = 100f;
 
-	private Rigidbody2D rigidbody;
+	private Rigidbody2D myRigidbody;
 	protected Coroutine attackRoutine;
+	private bool isSlowed = false;
+	private float slowTime = 0;
+	private float speed;
 
 	public Transform MyTarget { get; set; }
 
@@ -51,15 +54,27 @@ public abstract class Character : MonoBehaviour
 	// Start is called before the first frame update
 	protected virtual void Start()
 	{
-		rigidbody = GetComponent<Rigidbody2D>();
+		myRigidbody = GetComponent<Rigidbody2D>();
 		MyAnimator = GetComponent<Animator>();
 		health.Initialize(initHealth, initHealth);
+		speed = initSpeed;
 	}
 
 	// Update is called once per frame
 	protected virtual void Update()
 	{
 		HandleLayers();
+
+		if (isSlowed)
+		{
+			slowTime += Time.deltaTime;
+			if (slowTime > 6)
+			{
+				isSlowed = false;
+				slowTime = 0;
+				speed = initSpeed;
+			}
+		}
 	}
 
 	protected virtual void FixedUpdate()
@@ -71,7 +86,7 @@ public abstract class Character : MonoBehaviour
 	{
 		if (IsAlive)
 		{
-			rigidbody.velocity = MyDirection.normalized * MySpeed;
+			myRigidbody.velocity = MyDirection.normalized * MySpeed;
 		}
 		
 	}
@@ -110,14 +125,22 @@ public abstract class Character : MonoBehaviour
 		MyAnimator.SetLayerWeight(MyAnimator.GetLayerIndex(layerName), 1);
 	}
 
-	public virtual void TakeDamage(float damage, Transform source)
+	public virtual void TakeDamage(float damage, float slowEffect, Transform source)
 	{
 		health.MyCurrentValue -= damage;
+
+		if (slowEffect > 0)
+		{
+			speed = initSpeed * (1 - slowEffect);
+			isSlowed = true;
+			slowTime = 0;
+		}
+		
 
 		if (health.MyCurrentValue <= 0)
 		{
 			MyDirection = Vector2.zero;
-			rigidbody.velocity = MyDirection;
+			myRigidbody.velocity = MyDirection;
 			MyAnimator.SetTrigger("die");
 		}
 	}

@@ -7,6 +7,7 @@ public class SpellScript : MonoBehaviour
 	private Rigidbody2D myRigidbody;
 	private Transform source;
 	private float speed;
+	private float slowEffect;
 	private int damage;
 	private float maxLifetime = 1.0f;
 	private float aliveTime = 0;
@@ -20,11 +21,12 @@ public class SpellScript : MonoBehaviour
 		myRigidbody = GetComponent<Rigidbody2D>();
 	}
 
-	public void Initialize(Transform target, int damage, float speed, Transform source)
+	public void Initialize(Transform target, int damage, float speed, float slowEffect, Transform source)
 	{
 		this.MyTarget = target;
 		this.damage = damage;
 		this.speed = speed;
+		this.slowEffect = slowEffect;
 		this.source = source;
 	}
 
@@ -64,7 +66,7 @@ public class SpellScript : MonoBehaviour
 		{
 			Character c = collision.GetComponentInParent<Character>();
 			speed = 0;
-			c.TakeDamage(damage, source);
+			c.TakeDamage(damage, slowEffect, source);
 			GetComponent<Animator>().SetTrigger("impact");
 			myRigidbody.velocity = Vector2.zero;
 			MyTarget = null;

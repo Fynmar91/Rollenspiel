@@ -15,10 +15,25 @@ public class Player : Character
 
 	private SpellBook spellBook;
 	private float initMana = 100f;
+	private float animatorSpeed;
 
 	private Vector3 min, max;
 
 	public int MyExitIndex { get; set; }
+
+	private static Player instance;
+
+	public static Player MyInstance
+	{
+		get
+		{
+			if (instance == null)
+			{
+				instance = FindObjectOfType<Player>();
+			}
+			return instance;
+		}
+	}
 
 	// Start is called before the first frame update
 	protected override void Start()
@@ -42,7 +57,7 @@ public class Player : Character
 		MyDirection = Vector2.zero;
 
 		// DEBUG
-		if (Input.GetKeyDown(KeyCode.I))
+		if (Input.GetKeyDown(KeyCode.L))
 		{
 			health.MyCurrentValue -= 8;
 			mana.MyCurrentValue -= 4;
@@ -54,22 +69,22 @@ public class Player : Character
 		}
 		// DEBUG
 
-		if (Input.GetKey(KeyCode.W))
+		if (Input.GetKey(KeybindManager.MyInstance.Keybinds["UP"]))
 		{
 			MyDirection += Vector2.up;
 			//MyExitIndex = 0;
 		}
-		if (Input.GetKey(KeyCode.A))
+		if (Input.GetKey(KeybindManager.MyInstance.Keybinds["LEFT"]))
 		{
 			MyDirection += Vector2.left;
 			//MyExitIndex = 3;
 		}
-		if (Input.GetKey(KeyCode.S))
+		if (Input.GetKey(KeybindManager.MyInstance.Keybinds["DOWN"]))
 		{
 			MyDirection += Vector2.down;
 			//MyExitIndex = 2;
 		}
-		if (Input.GetKey(KeyCode.D))
+		if (Input.GetKey(KeybindManager.MyInstance.Keybinds["RIGHT"]))
 		{
 			MyDirection += Vector2.right;
 			//MyExitIndex = 1;
@@ -77,6 +92,13 @@ public class Player : Character
 		if (isMoving)
 		{
 			StopAttack();
+		}
+		foreach (string action in KeybindManager.MyInstance.ActionBinds.Keys)
+		{
+			if (Input.GetKeyDown(KeybindManager.MyInstance.ActionBinds[action]))
+			{
+				UIManager.MyInstance.ClickActionButton(action);
+			}
 		}
 	}
 
@@ -86,14 +108,14 @@ public class Player : Character
 		this.max = max;
 	}
 
-	public void CastSpell(int spellIndex)
+	public void CastSpell(string spellName)
 	{
 		if (MyTarget != null && MyTarget.GetComponentInParent<Character>().IsAlive && !IsAttacking && !isMoving && InLineOfSight(MyTarget))
 		{
 			IsAttacking = true;
 			TurnPlayer();
 			MyAnimator.SetBool("attack", IsAttacking);
-			attackRoutine = StartCoroutine(Attack(spellIndex));
+			attackRoutine = StartCoroutine(Attack(spellName));
 			HandleLayers();
 		}
 	}
@@ -106,11 +128,11 @@ public class Player : Character
 		MyDirection = Vector2.zero;
 	}
 
-	private IEnumerator Attack(int spellIndex)
+	private IEnumerator Attack(string spellName)
 	{
 		Transform currentTarget = MyTarget;
-		Spell newSpell = spellBook.CastSpell(spellIndex);
-		float animatorSpeed = MyAnimator.speed;
+		Spell newSpell = spellBook.CastSpell(spellName);
+		animatorSpeed = MyAnimator.speed;
 
 		MyAnimator.speed = 2 / newSpell.MyCastTime;
 		
@@ -119,7 +141,7 @@ public class Player : Character
 		if (currentTarget != null && InLineOfSight(currentTarget))
 		{
 			SpellScript s = Instantiate(newSpell.MySpellPrefab, exitPoints[MyExitIndex].position, Quaternion.identity).GetComponent<SpellScript>();
-			s.Initialize(currentTarget, newSpell.MyDamage, newSpell.MySpeed, transform);
+			s.Initialize(currentTarget, newSpell.MyDamage, newSpell.MySpeed, newSpell.MySlowEffect, transform);
 		}
 		MyAnimator.speed = animatorSpeed;
 		StopAttack();
@@ -154,6 +176,7 @@ public class Player : Character
 		if (attackRoutine != null)
 		{
 			StopCoroutine(attackRoutine);
+			MyAnimator.speed = animatorSpeed;
 		}
 	}
 }

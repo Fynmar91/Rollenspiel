@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 
 [Serializable]
-public class Spell
+public class Spell : IUseable
 {
 	[SerializeField]
 	private string name;
@@ -20,6 +20,9 @@ public class Spell
 	private float speed;
 
 	[SerializeField]
+	private float slowEffect;
+
+	[SerializeField]
 	private float castTime;
 
 	[SerializeField]
@@ -32,7 +35,13 @@ public class Spell
 	public int MyDamage { get => damage; }
 	public Sprite MyIcon { get => icon; }
 	public float MySpeed { get => speed; }
+	public float MySlowEffect { get => slowEffect; }
 	public float MyCastTime { get => castTime; }
 	public GameObject MySpellPrefab { get => spellPrefab; }
 	public Color MyBarColor { get => barColor; }
+
+	public void Use()
+	{
+		Player.MyInstance.CastSpell(MyName);
+	}
 }

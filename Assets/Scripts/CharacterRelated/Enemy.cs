@@ -62,12 +62,12 @@ public class Enemy : NPC
 		healthGroup.alpha = 0;
 	}
 
-	public override void TakeDamage(float damage, Transform source)
+	public override void TakeDamage(float damage, float slowEffect, Transform source)
 	{
 		if (!(currentState is EvadeState))
 		{
 			SetTarget(source);
-			base.TakeDamage(damage, source);
+			base.TakeDamage(damage, slowEffect, source);
 			OnHealthChanged(health.MyCurrentValue);
 		}
 	}
