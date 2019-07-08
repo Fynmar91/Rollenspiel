@@ -85,6 +85,9 @@ public class UIManager : MonoBehaviour
 	{
 		canvasGroup.alpha = canvasGroup.alpha > 0 ? 0 : 1;
 		canvasGroup.blocksRaycasts = canvasGroup.blocksRaycasts == true ? false : true;
+
+		HandScript.MyInstance.MyMoveable = SpellBook.MyInstance.GetSpell("FROSTBOLT");
+		actionButtons[0].SetUseable(SpellBook.MyInstance.GetSpell("FROSTBOLT"));
 		//Time.timeScale = Time.timeScale > 0 ? 0 : 1;
 	}
 

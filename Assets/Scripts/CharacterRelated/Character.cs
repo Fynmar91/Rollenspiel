@@ -141,6 +141,7 @@ public abstract class Character : MonoBehaviour
 		{
 			MyDirection = Vector2.zero;
 			myRigidbody.velocity = MyDirection;
+			transform.GetComponent<BoxCollider2D>().enabled = false;
 			MyAnimator.SetTrigger("die");
 		}
 	}
