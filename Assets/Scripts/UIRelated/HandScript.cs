@@ -25,10 +25,15 @@ public class HandScript : MonoBehaviour
 		}
 	}
 
+	private void Awake()
+	{
+		icon = GetComponent<Image>();
+	}
+
 	// Start is called before the first frame update
 	void Start()
 	{
-		icon = GetComponent<Image>();
+		
 	}
 
 	// Update is called once per frame

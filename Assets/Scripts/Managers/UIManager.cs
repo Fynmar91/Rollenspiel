@@ -23,6 +23,7 @@ public class UIManager : MonoBehaviour
 
 	private Stat healthStat;
 	private GameObject[] keybindButtons;
+	private bool menuActive = false;
 
 	private static UIManager instance;
 
@@ -46,6 +47,11 @@ public class UIManager : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
+		//DEBUG
+		HandScript.MyInstance.MyMoveable = SpellBook.MyInstance.GetSpell("FROSTBOLT");
+		actionButtons[0].SetUseable(SpellBook.MyInstance.GetSpell("FROSTBOLT"));
+		//DEBUG
+
 		healthStat = targetFrame.GetComponentInChildren<Stat>();
 	}
 
@@ -83,11 +89,23 @@ public class UIManager : MonoBehaviour
 
 	public void ToggleMenu(CanvasGroup canvasGroup)
 	{
-		canvasGroup.alpha = canvasGroup.alpha > 0 ? 0 : 1;
-		canvasGroup.blocksRaycasts = canvasGroup.blocksRaycasts == true ? false : true;
+		if (menuActive == true)
+		{
+			keybindMenu.alpha = 0;
+			keybindMenu.blocksRaycasts = false;
 
-		HandScript.MyInstance.MyMoveable = SpellBook.MyInstance.GetSpell("FROSTBOLT");
-		actionButtons[0].SetUseable(SpellBook.MyInstance.GetSpell("FROSTBOLT"));
+			spellBook.alpha = 0;
+			spellBook.blocksRaycasts = false;
+
+			menuActive = false;
+		}
+		else
+		{
+			canvasGroup.alpha = canvasGroup.alpha > 0 ? 0 : 1;
+			canvasGroup.blocksRaycasts = canvasGroup.blocksRaycasts == true ? false : true;
+
+			menuActive = true;
+		}		
 		//Time.timeScale = Time.timeScale > 0 ? 0 : 1;
 	}
 

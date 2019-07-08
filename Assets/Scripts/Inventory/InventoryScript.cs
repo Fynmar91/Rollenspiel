@@ -4,10 +4,23 @@ using UnityEngine;
 
 public class InventoryScript : MonoBehaviour
 {
+	[SerializeField]
+	private BagButton[] bagButtons;
+
 	//DEBUG
 	[SerializeField]
 	private Item[] items;
 	//DEBUG
+
+	private List<Bag> bags = new List<Bag>();
+
+	public bool CanAddBag
+	{
+		get
+		{
+			return bags.Count < 5;
+		}
+	}
 
 	private static InventoryScript instance;
 
@@ -25,22 +38,31 @@ public class InventoryScript : MonoBehaviour
 
 	private void Awake()
 	{
-		//DEBUG
-		Bag bag = (Bag)Instantiate(items[0]);
-		bag.Initialize(16);
-		bag.Use();
-		//DEBUG
-	}
-
-	// Start is called before the first frame update
-	void Start()
-	{
 		
 	}
 
-// Update is called once per frame
-void Update()
+	private void Update()
 	{
+		if (Input.GetKeyDown(KeyCode.J))
+		{
+			//DEBUG
+			Bag bag = (Bag)Instantiate(items[0]);
+			bag.Initialize(16);
+			bag.Use();
+			//DEBUG
+		}
+	}
 
+	public void AddBag(Bag bag)
+	{
+		foreach (BagButton bagButton in bagButtons)
+		{
+			if (bagButton.MyBag == null)
+			{
+				bagButton.MyBag = bag;
+				bags.Add(bag);
+				break;
+			}
+		}
 	}
 }
