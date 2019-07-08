@@ -47,9 +47,6 @@ public class UIManager : MonoBehaviour
 	void Start()
 	{
 		healthStat = targetFrame.GetComponentInChildren<Stat>();
-		SetUseable(actionButtons[0], SpellBook.MyInstance.GetSpell("FIREBALL"));
-		SetUseable(actionButtons[1], SpellBook.MyInstance.GetSpell("FROSTBOLT"));
-		SetUseable(actionButtons[2], SpellBook.MyInstance.GetSpell("LIGHTNING ARC"));
 	}
 
 	// Update is called once per frame
@@ -101,12 +98,5 @@ public class UIManager : MonoBehaviour
 	public void ClickActionButton(string buttonName)
 	{
 		Array.Find(actionButtons, x => x.gameObject.name == buttonName).MyButton.onClick.Invoke();
-	}
-
-	public void SetUseable(ActionButton btn, IUseable useable)
-	{
-		btn.MyIcon.sprite = useable.MyIcon;
-		btn.MyIcon.color = Color.white;
-		btn.MyUseable = useable;
 	}
 }
