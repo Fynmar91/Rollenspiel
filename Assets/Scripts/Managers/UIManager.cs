@@ -18,6 +18,9 @@ public class UIManager : MonoBehaviour
 	[SerializeField]
 	private CanvasGroup keybindMenu;
 
+	[SerializeField]
+	private CanvasGroup spellBook;
+
 	private Stat healthStat;
 	private GameObject[] keybindButtons;
 
@@ -54,7 +57,11 @@ public class UIManager : MonoBehaviour
 	{
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
-			ToggleMenu();
+			ToggleMenu(keybindMenu);
+		}
+		if (Input.GetKeyDown(KeyCode.P))
+		{
+			ToggleMenu(spellBook);
 		}
 	}
 
@@ -77,11 +84,11 @@ public class UIManager : MonoBehaviour
 		healthStat.MyCurrentValue = health;
 	}
 
-	public void ToggleMenu()
+	public void ToggleMenu(CanvasGroup canvasGroup)
 	{
-		keybindMenu.alpha = keybindMenu.alpha > 0 ? 0 : 1;
-		keybindMenu.blocksRaycasts = keybindMenu.blocksRaycasts == true ? false : true;
-		Time.timeScale = Time.timeScale > 0 ? 0 : 1;
+		canvasGroup.alpha = canvasGroup.alpha > 0 ? 0 : 1;
+		canvasGroup.blocksRaycasts = canvasGroup.blocksRaycasts == true ? false : true;
+		//Time.timeScale = Time.timeScale > 0 ? 0 : 1;
 	}
 
 	public void UpdateKeyText(string key, KeyCode code)

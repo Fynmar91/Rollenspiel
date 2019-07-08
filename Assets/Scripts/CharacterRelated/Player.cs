@@ -13,7 +13,6 @@ public class Player : Character
 	[SerializeField]
 	private Block[] blocks;
 
-	private SpellBook spellBook;
 	private float initMana = 100f;
 	private float animatorSpeed;
 
@@ -41,7 +40,6 @@ public class Player : Character
 		base.Start();
 		MyExitIndex = 2;
 		mana.Initialize(initMana, initMana);
-		spellBook = GetComponent<SpellBook>();
 	}
 
 	// Update is called once per frame
@@ -57,12 +55,12 @@ public class Player : Character
 		MyDirection = Vector2.zero;
 
 		// DEBUG
-		if (Input.GetKeyDown(KeyCode.L))
+		if (Input.GetKeyDown(KeyCode.Comma))
 		{
 			health.MyCurrentValue -= 8;
 			mana.MyCurrentValue -= 4;
 		}
-		if (Input.GetKeyDown(KeyCode.O))
+		if (Input.GetKeyDown(KeyCode.Period))
 		{
 			health.MyCurrentValue += 10;
 			mana.MyCurrentValue += 5;
@@ -131,7 +129,7 @@ public class Player : Character
 	private IEnumerator Attack(string spellName)
 	{
 		Transform currentTarget = MyTarget;
-		Spell newSpell = spellBook.CastSpell(spellName);
+		Spell newSpell = SpellBook.MyInstance.CastSpell(spellName);
 		animatorSpeed = MyAnimator.speed;
 
 		MyAnimator.speed = 2 / newSpell.MyCastTime;
@@ -169,7 +167,7 @@ public class Player : Character
 
 	public void StopAttack()
 	{
-		spellBook.StopCasting();
+		SpellBook.MyInstance.StopCasting();
 		IsAttacking = false;
 		MyAnimator.SetBool("attack", IsAttacking);
 
