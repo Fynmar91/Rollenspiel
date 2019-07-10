@@ -66,6 +66,10 @@ public class UIManager : MonoBehaviour
 		{
 			ToggleMenu(spellBook);
 		}
+		if (Input.GetKeyDown(KeyCode.B))
+		{
+			InventoryScript.MyInstance.Toggle();
+		}
 	}
 
 	public void ShowTargetFrame(NPC target)

@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class BagButton : MonoBehaviour
+public class BagButton : MonoBehaviour, IPointerClickHandler
 {
 	[SerializeField]
 	private Sprite full, empty;
@@ -27,15 +28,12 @@ public class BagButton : MonoBehaviour
 		}
 	}
 
-	// Start is called before the first frame update
-	void Start()
+	public void OnPointerClick(PointerEventData eventData)
 	{
-
+		if (bag != null)
+		{
+			bag.MyBagScript.Toggle();
+		}
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
-
-	}
 }

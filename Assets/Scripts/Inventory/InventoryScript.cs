@@ -65,4 +65,17 @@ public class InventoryScript : MonoBehaviour
 			}
 		}
 	}
+
+	public void Toggle()
+	{
+		bool closedBag = bags.Find(x => !x.MyBagScript.IsOpen);
+
+		foreach (Bag bag in bags)
+		{
+			if (bag.MyBagScript.IsOpen != closedBag)
+			{
+				bag.MyBagScript.Toggle();
+			}
+		}
+	}
 }
