@@ -83,6 +83,19 @@ public class InventoryScript : MonoBehaviour
 
 	public void AddItem(Item item)
 	{
+		if (item.MyStackSize > 0)
+		{
+			if (PlaceInStack(item))
+			{
+				return;
+			}
+		}
+
+		PlaceInEmpty(item);
+	}
+
+	private void PlaceInEmpty(Item item)
+	{
 		foreach (Bag bag in bags)
 		{
 			if (bag.MyBagScript.AddItem(item))
@@ -90,6 +103,22 @@ public class InventoryScript : MonoBehaviour
 				return;
 			}
 		}
+	}
+
+	private bool PlaceInStack(Item item)
+	{
+		foreach (Bag bag in bags)
+		{
+			foreach (SlotScript slot in bag.MyBagScript.MySlots)
+			{
+				if (slot.StackItem(item))
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public void Toggle()
