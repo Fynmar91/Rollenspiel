@@ -9,7 +9,10 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 	[SerializeField]
 	private Image icon;
 
-	private Stack<Item> items = new Stack<Item>();
+	[SerializeField]
+	private Text stackSize;
+
+	private ObservableStack<Item> items = new ObservableStack<Item>();
 
 	public bool IsEmpty
 	{
@@ -34,6 +37,14 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 
 	public Image MyIcon { get => icon; set => icon = value; }
 	public int MyCount { get => items.Count; }
+	public Text MyStackText { get => stackSize; }
+
+	private void Awake()
+	{
+		items.OnPush += new UpdateStackEvent(UpdateSlot);
+		items.OnPop += new UpdateStackEvent(UpdateSlot);
+		items.OnClear += new UpdateStackEvent(UpdateSlot);
+	}
 
 	public bool AddItem(Item item)
 	{
@@ -49,7 +60,6 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 		if (!IsEmpty)
 		{
 			items.Pop();
-			UIManager.MyInstance.UpdateStackSize(this);
 		}
 	}
 
@@ -79,5 +89,10 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 		}
 
 		return false;
+	}
+
+	private void UpdateSlot()
+	{
+		UIManager.MyInstance.UpdateStackSize(this);
 	}
 }
