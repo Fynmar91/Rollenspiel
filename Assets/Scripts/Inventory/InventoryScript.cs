@@ -59,6 +59,13 @@ public class InventoryScript : MonoBehaviour
 			AddItem(bag);
 			//DEBUG
 		}
+		if (Input.GetKeyDown(KeyCode.L))
+		{
+			//DEBUG
+			HealthPotion potion = (HealthPotion)Instantiate(items[1]);
+			AddItem(potion);
+			//DEBUG
+		}
 	}
 
 	public void AddBag(Bag bag)
