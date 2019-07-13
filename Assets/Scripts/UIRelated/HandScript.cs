@@ -57,4 +57,10 @@ public class HandScript : MonoBehaviour
 
 		return tmp;
 	}
+
+	public void Drop()
+	{
+		MyMoveable = null;
+		icon.color = new Color(0, 0, 0, 0);
+	}
 }

@@ -22,6 +22,19 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 		}
 	}
 
+	public bool IsFull
+	{
+		get
+		{
+			if (IsEmpty || MyCount < MyItem.MyStackSize)
+			{
+				return false;
+			}
+
+			return true;
+		}
+	}
+
 	public Item MyItem
 	{
 		get
@@ -65,6 +78,22 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
+		if (eventData.button == PointerEventData.InputButton.Left)
+		{
+			if (InventoryScript.MyInstance.MySourceSlot == null && !IsEmpty)
+			{
+				HandScript.MyInstance.TakeMovable(MyItem as IMoveable);
+				InventoryScript.MyInstance.MySourceSlot = this;
+			}
+			else if (InventoryScript.MyInstance.MySourceSlot != null)
+			{
+				if (PutItemBack() || SwapItems(InventoryScript.MyInstance.MySourceSlot) || AddItems(InventoryScript.MyInstance.MySourceSlot.items))
+				{
+					HandScript.MyInstance.Drop();
+					InventoryScript.MyInstance.MySourceSlot = null;
+				}
+			}
+		}
 		if (eventData.button == PointerEventData.InputButton.Right)
 		{
 			UseItem();
@@ -88,6 +117,58 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 			return true;
 		}
 
+		return false;
+	}
+
+	private bool AddItems(ObservableStack<Item> newItems)
+	{
+		if (IsEmpty || newItems.Peek().GetType() == MyItem.GetType())
+		{
+			int count = newItems.Count;
+
+			for (int i = 0; i < count; i++)
+			{
+				if (IsFull)
+				{
+					return false;
+				}
+
+				AddItem(newItems.Pop());
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private bool PutItemBack()
+	{
+		if (InventoryScript.MyInstance.MySourceSlot == this)
+		{
+			InventoryScript.MyInstance.MySourceSlot.MyIcon.color = Color.white;
+			return true;
+		}
+
+		return false;
+	}
+
+	private bool SwapItems(SlotScript source)
+	{
+		if (IsEmpty)
+		{
+			return false;
+		}
+		if (source.MyItem.GetType() != MyItem.GetType() || source.MyCount + MyCount > MyItem.MyStackSize)
+		{
+			ObservableStack<Item> tmpSource = new ObservableStack<Item>(source.items);
+			source.items.Clear();
+			source.AddItems(items);
+			items.Clear();
+			AddItems(tmpSource);
+
+			return true;
+		}
 		return false;
 	}
 

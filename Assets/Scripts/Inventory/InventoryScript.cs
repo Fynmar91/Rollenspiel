@@ -9,8 +9,8 @@ public class InventoryScript : MonoBehaviour
 
 	//DEBUG
 	[SerializeField]
-	private Item[] items;
 	//DEBUG
+	private Item[] items;
 
 	private List<Bag> bags = new List<Bag>();
 
@@ -23,7 +23,6 @@ public class InventoryScript : MonoBehaviour
 	}
 
 	private static InventoryScript instance;
-
 	public static InventoryScript MyInstance
 	{
 		get
@@ -33,6 +32,22 @@ public class InventoryScript : MonoBehaviour
 				instance = FindObjectOfType<InventoryScript>();
 			}
 			return instance;
+		}
+	}
+
+	private SlotScript sourceSlot;
+	public SlotScript MySourceSlot
+	{
+		get => sourceSlot;
+
+		set
+		{
+			sourceSlot = value;
+
+			if (value != null)
+			{
+				sourceSlot.MyIcon.color = Color.grey;
+			}
 		}
 	}
 
