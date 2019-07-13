@@ -93,6 +93,14 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 				HandScript.MyInstance.TakeMovable(MyItem as IMoveable);
 				InventoryScript.MyInstance.MySourceSlot = this;
 			}
+			else if (InventoryScript.MyInstance.MySourceSlot == null && IsEmpty && (HandScript.MyInstance.MyMoveable is Bag))
+			{
+				Bag bag = (Bag)HandScript.MyInstance.MyMoveable;
+
+				AddItem(bag);
+				bag.MyBagButton.RemoveBag();
+				HandScript.MyInstance.Drop();
+			}
 			else if (InventoryScript.MyInstance.MySourceSlot != null)
 			{
 				if (PutItemBack() || MergeItems(InventoryScript.MyInstance.MySourceSlot) || SwapItems(InventoryScript.MyInstance.MySourceSlot) || AddItems(InventoryScript.MyInstance.MySourceSlot.items))
