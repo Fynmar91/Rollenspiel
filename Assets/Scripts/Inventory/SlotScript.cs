@@ -189,14 +189,14 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 		}
 		if (source.MyItem.GetType() == MyItem.GetType() && !IsFull)
 		{
-			int free = MyItem.MyStackSize - MyCount;
+			int free = source.MyCount < MyItem.MyStackSize - MyCount ? source.MyCount : MyItem.MyStackSize - MyCount;
 
 			for (int i = 0; i < free; i++)
 			{
 				AddItem(source.items.Pop());
 			}
 
-		return true;
+			return true;
 		}
 
 		return false;
