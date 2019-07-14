@@ -14,6 +14,11 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 
 	private ObservableStack<Item> items = new ObservableStack<Item>();
 
+	public Image MyIcon { get => icon; set => icon = value; }
+	public int MyCount { get => items.Count; }
+	public Text MyStackText { get => stackSize; }
+	public BagScript MyBag { get; set; }
+
 	public bool IsEmpty
 	{
 		get
@@ -47,10 +52,6 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 			return null;
 		}
 	}
-
-	public Image MyIcon { get => icon; set => icon = value; }
-	public int MyCount { get => items.Count; }
-	public Text MyStackText { get => stackSize; }
 
 	private void Awake()
 	{
@@ -97,9 +98,12 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 			{
 				Bag bag = (Bag)HandScript.MyInstance.MyMoveable;
 
-				AddItem(bag);
-				bag.MyBagButton.RemoveBag();
-				HandScript.MyInstance.Drop();
+				if (bag.MyBagScript != MyBag && InventoryScript.MyInstance.MyEmptySlotCount - bag.MySlots > 0)
+				{
+					AddItem(bag);
+					bag.MyBagButton.RemoveBag();
+					HandScript.MyInstance.Drop();
+				}
 			}
 			else if (InventoryScript.MyInstance.MySourceSlot != null)
 			{

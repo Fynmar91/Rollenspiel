@@ -20,6 +20,21 @@ public class BagScript : MonoBehaviour
 		}
 	}
 
+	public int MyEmptySlotCount
+	{
+		get
+		{
+			int count = 0;
+			foreach (SlotScript slot in MySlots)
+			{
+				if (slot.IsEmpty)
+				{
+					count++;
+				}
+			}
+			return count;
+		}
+	}
 
 	private void Awake()
 	{
@@ -31,6 +46,7 @@ public class BagScript : MonoBehaviour
 		for (int i = 0; i < slotCount; i++)
 		{
 			SlotScript slot = Instantiate(slotPrefab, transform).GetComponent<SlotScript>();
+			slot.MyBag = this;
 			MySlots.Add(slot);
 		}
 	}
