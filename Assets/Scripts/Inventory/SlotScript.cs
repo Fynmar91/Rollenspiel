@@ -12,10 +12,8 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 	[SerializeField]
 	private Text stackSize;
 
-	private ObservableStack<Item> items = new ObservableStack<Item>();
-
 	public Image MyIcon { get => icon; set => icon = value; }
-	public int MyCount { get => items.Count; }
+	public int MyCount { get => MyItems.Count; }
 	public Text MyStackText { get => stackSize; }
 	public BagScript MyBag { get; set; }
 
@@ -23,7 +21,7 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 	{
 		get
 		{
-			return items.Count == 0;
+			return MyItems.Count == 0;
 		}
 	}
 
@@ -46,23 +44,26 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 		{
 			if (!IsEmpty)
 			{
-				return items.Peek();
+				return MyItems.Peek();
 			}
 
 			return null;
 		}
 	}
 
+	private ObservableStack<Item> items = new ObservableStack<Item>();
+	public ObservableStack<Item> MyItems { get => items; }
+
 	private void Awake()
 	{
-		items.OnPush += new UpdateStackEvent(UpdateSlot);
-		items.OnPop += new UpdateStackEvent(UpdateSlot);
-		items.OnClear += new UpdateStackEvent(UpdateSlot);
+		MyItems.OnPush += new UpdateStackEvent(UpdateSlot);
+		MyItems.OnPop += new UpdateStackEvent(UpdateSlot);
+		MyItems.OnClear += new UpdateStackEvent(UpdateSlot);
 	}
 
 	public bool AddItem(Item item)
 	{
-		items.Push(item);
+		MyItems.Push(item);
 		icon.sprite = item.MyIcon;
 		icon.color = Color.white;
 		item.MySlot = this;
@@ -73,15 +74,15 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 	{
 		if (!IsEmpty)
 		{
-			items.Pop();
+			MyItems.Pop();
 		}
 	}
 
 	public void Clear()
 	{
-		if (items.Count > 0)
+		if (MyItems.Count > 0)
 		{
-			items.Clear();
+			MyItems.Clear();
 		}
 	}
 
@@ -107,7 +108,7 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 			}
 			else if (InventoryScript.MyInstance.MySourceSlot != null)
 			{
-				if (PutItemBack() || MergeItems(InventoryScript.MyInstance.MySourceSlot) || SwapItems(InventoryScript.MyInstance.MySourceSlot) || AddItems(InventoryScript.MyInstance.MySourceSlot.items))
+				if (PutItemBack() || MergeItems(InventoryScript.MyInstance.MySourceSlot) || SwapItems(InventoryScript.MyInstance.MySourceSlot) || AddItems(InventoryScript.MyInstance.MySourceSlot.MyItems))
 				{
 					HandScript.MyInstance.Drop();
 					InventoryScript.MyInstance.MySourceSlot = null;
@@ -130,9 +131,9 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 
 	public bool StackItem(Item item)
 	{
-		if (!IsEmpty && item.name == MyItem.name && items.Count < MyItem.MyStackSize)
+		if (!IsEmpty && item.name == MyItem.name && MyItems.Count < MyItem.MyStackSize)
 		{
-			items.Push(item);
+			MyItems.Push(item);
 			item.MySlot = this;
 			return true;
 		}
@@ -181,11 +182,11 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 		}
 		if (source.MyItem.GetType() != MyItem.GetType() || source.MyCount + MyCount > MyItem.MyStackSize)
 		{
-			ObservableStack<Item> tmpSource = new ObservableStack<Item>(source.items);
+			ObservableStack<Item> tmpSource = new ObservableStack<Item>(source.MyItems);
 
-			source.items.Clear();
-			source.AddItems(items);
-			items.Clear();
+			source.MyItems.Clear();
+			source.AddItems(MyItems);
+			MyItems.Clear();
 			AddItems(tmpSource);
 
 			return true;
@@ -205,7 +206,7 @@ public class SlotScript : MonoBehaviour, IPointerClickHandler, IClickable
 
 			for (int i = 0; i < free; i++)
 			{
-				AddItem(source.items.Pop());
+				AddItem(source.MyItems.Pop());
 			}
 
 			return true;

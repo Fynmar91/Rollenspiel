@@ -72,15 +72,20 @@ public class InventoryScript : MonoBehaviour
 		
 	}
 
+	private void Start()
+	{
+		//DEBUG
+		Bag bag = (Bag)Instantiate(items[2]);
+		bag.Initialize(8);
+		bag.Use();
+		//DEBUG
+	}
+
 	private void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.J))
 		{
-			//DEBUG
-			Bag bag = (Bag)Instantiate(items[0]);
-			bag.Initialize(16);
-			bag.Use();
-			//DEBUG
+			
 		}
 		if (Input.GetKeyDown(KeyCode.K))
 		{
