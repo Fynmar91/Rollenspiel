@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class BagButton : MonoBehaviour, IPointerClickHandler
 {
 	[SerializeField]
-	private Sprite full, empty;
+	private Sprite full;
 
 	private Bag bag;
 
@@ -18,11 +18,12 @@ public class BagButton : MonoBehaviour, IPointerClickHandler
 		{
 			if (value != null)
 			{
-				GetComponent<Image>().sprite = full;
+				GetComponent<Image>().sprite = value.MyIcon;
+				GetComponent<Image>().color = new Color(255, 255, 255, 255);
 			}
 			else
 			{
-				GetComponent<Image>().sprite = empty;
+				GetComponent<Image>().color = new Color(0,0,0,0);
 			}
 			bag = value;
 		}
@@ -32,7 +33,23 @@ public class BagButton : MonoBehaviour, IPointerClickHandler
 	{
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
-			if (Input.GetKey(KeyCode.LeftShift))
+			if (InventoryScript.MyInstance.MySourceSlot != null && HandScript.MyInstance.MyMoveable != null && HandScript.MyInstance.MyMoveable is Bag)
+			{
+				if (MyBag != null)
+				{
+					InventoryScript.MyInstance.SwapBags(MyBag, HandScript.MyInstance.MyMoveable as Bag);
+				}
+				else
+				{
+					Bag tmp = (Bag)HandScript.MyInstance.MyMoveable;
+					tmp.MyBagButton = this;
+					tmp.Use();
+					MyBag = tmp;
+					HandScript.MyInstance.Drop();
+					InventoryScript.MyInstance.MySourceSlot = null;
+				}
+			}
+			else if (Input.GetKey(KeyCode.LeftShift))
 			{
 				HandScript.MyInstance.TakeMovable(MyBag);
 			}

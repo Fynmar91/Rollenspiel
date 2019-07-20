@@ -8,9 +8,7 @@ public class BagScript : MonoBehaviour
 	private GameObject slotPrefab;
 
 	private CanvasGroup canvasGroup;
-
-	private List<SlotScript> slots = new List<SlotScript>();
-	public List<SlotScript> MySlots { get => slots; }
+	public List<SlotScript> MySlots { get; } = new List<SlotScript>();
 
 	public bool IsOpen
 	{
@@ -45,7 +43,7 @@ public class BagScript : MonoBehaviour
 	{
 		List<Item> items = new List<Item>();
 
-		foreach (SlotScript slot in slots)
+		foreach (SlotScript slot in MySlots)
 		{
 			if (!slot.IsEmpty)
 			{

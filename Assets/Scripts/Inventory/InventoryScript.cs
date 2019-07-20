@@ -66,6 +66,29 @@ public class InventoryScript : MonoBehaviour
 		}
 	}
 
+	public int MyTotalSlotCount
+	{
+		get
+		{
+			int count = 0;
+
+			foreach (Bag bag in bags)
+			{
+				count += bag.MyBagScript.MySlots.Count;
+			}
+
+			return count;
+		}
+	}
+
+	public int MyFullSlotCount
+	{
+		get
+		{
+			return MyTotalSlotCount - MyEmptySlotCount;
+		}
+	}
+
 
 	private void Awake()
 	{
@@ -118,10 +141,43 @@ public class InventoryScript : MonoBehaviour
 		}
 	}
 
+	public void AddBag(Bag bag, BagButton bagButton)
+	{
+		bags.Add(bag);
+		bagButton.MyBag = bag;
+	}
+
 	public void RemoveBag(Bag bag)
 	{
 		bags.Remove(bag);
 		Destroy(bag.MyBagScript.gameObject);
+	}
+
+	public void SwapBags(Bag oldBag, Bag newBag)
+	{
+		int newSlotCount = (MyTotalSlotCount - oldBag.MySlots) + newBag.MySlots;
+
+		if (newSlotCount - MyFullSlotCount >= 0)
+		{
+			List<Item> bagItems = oldBag.MyBagScript.GetItems();
+
+			RemoveBag(oldBag);
+			newBag.MyBagButton = oldBag.MyBagButton;
+			newBag.Use();
+
+			foreach (Item item in bagItems)
+			{
+				if (item !=newBag)
+				{
+					AddItem(item);
+				}
+			}
+
+			AddItem(oldBag);
+			HandScript.MyInstance.Drop();
+			MyInstance.MySourceSlot = null;
+
+		}
 	}
 
 	public void AddItem(Item item)
