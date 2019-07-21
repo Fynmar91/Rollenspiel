@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void ItemCountChanged(Item item);
+
 public class InventoryScript : MonoBehaviour
 {
+	public event ItemCountChanged itemCountChangedEvent;
+
 	[SerializeField]
 	private BagButton[] bagButtons;
 
 	//DEBUG
 	[SerializeField]
-	//DEBUG
 	private Item[] items;
+	//DEBUG
 
 	private List<Bag> bags = new List<Bag>();
 
@@ -199,6 +203,7 @@ public class InventoryScript : MonoBehaviour
 		{
 			if (bag.MyBagScript.AddItem(item))
 			{
+				OnItemCountChanged(item);
 				return;
 			}
 		}
@@ -212,6 +217,7 @@ public class InventoryScript : MonoBehaviour
 			{
 				if (slot.StackItem(item))
 				{
+					OnItemCountChanged(item);
 					return true;
 				}
 			}
@@ -252,5 +258,13 @@ public class InventoryScript : MonoBehaviour
 		}
 
 		return useables;
+	}
+
+	public void OnItemCountChanged(Item item)
+	{
+		if (itemCountChangedEvent != null)
+		{
+			itemCountChangedEvent.Invoke(item);
+		}
 	}
 }

@@ -4,23 +4,33 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ActionButton : MonoBehaviour, IPointerClickHandler
+public class ActionButton : MonoBehaviour, IPointerClickHandler, IClickable
 {
 	[SerializeField]
 	private Image icon;
+
+	[SerializeField]
+	private Text stackSize;
 
 	public IUseable MyUseable { get; set; }
 	public Button MyButton { get; private set; }
 	public Image MyIcon { get => icon; set => icon = value; }
 
-	private Stack<IUseable> useables;
-	private int useablesCount;
+	private int count;
+	public int MyCount { get => count; }
+
+
+	public Text MyStackText { get => stackSize; }
+
+
+	private Stack<IUseable> useables = new Stack<IUseable>();
 
 	// Start is called before the first frame update
 	void Start()
 	{
 		MyButton = GetComponent<Button>();
 		MyButton.onClick.AddListener(OnClick);
+		InventoryScript.MyInstance.itemCountChangedEvent += new ItemCountChanged(UpdateItemCount);
 	}
 
 	// Update is called once per frame
@@ -39,7 +49,7 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler
 			}
 			if (useables != null && useables.Count > 0)
 			{
-				useables.Pop().Use();
+				useables.Peek().Use();
 			}
 		}
 	}
@@ -60,7 +70,7 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler
 		if (useable is Item)
 		{
 			useables = InventoryScript.MyInstance.GetUseables(useable);
-			useablesCount = useables.Count;
+			count = useables.Count;
 			InventoryScript.MyInstance.MySourceSlot.MyIcon.color = Color.white;
 			InventoryScript.MyInstance.MySourceSlot = null;
 		}
@@ -76,5 +86,23 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler
 	{
 		MyIcon.sprite = HandScript.MyInstance.Put().MyIcon;
 		MyIcon.color = Color.white;
+
+		if (MyCount > 1)
+		{
+			UIManager.MyInstance.UpdateStackSize(this);
+		}
+	}
+
+	public void UpdateItemCount(Item item)
+	{
+		if (item is IUseable && useables.Count > 0)
+		{
+			if (useables.Peek().GetType() == item.GetType())
+			{
+				useables = InventoryScript.MyInstance.GetUseables(item as IUseable);
+				count = useables.Count;
+				UIManager.MyInstance.UpdateStackSize(this);
+			}
+		}
 	}
 }
