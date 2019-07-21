@@ -4,15 +4,17 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ActionButton : MonoBehaviour, IPointerClickHandler 
+public class ActionButton : MonoBehaviour, IPointerClickHandler
 {
-	public IUseable MyUseable { get; set; }
-
-	public Button MyButton { get; private set; }
-
 	[SerializeField]
 	private Image icon;
+
+	public IUseable MyUseable { get; set; }
+	public Button MyButton { get; private set; }
 	public Image MyIcon { get => icon; set => icon = value; }
+
+	private Stack<IUseable> useables;
+	private int useablesCount;
 
 	// Start is called before the first frame update
 	void Start()
@@ -29,9 +31,16 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler
 
 	public void OnClick()
 	{
-		if (MyUseable != null)
+		if (HandScript.MyInstance.MyMoveable == null)
 		{
-			MyUseable.Use();
+			if (MyUseable != null)
+			{
+				MyUseable.Use();
+			}
+			if (useables != null && useables.Count > 0)
+			{
+				useables.Pop().Use();
+			}
 		}
 	}
 
@@ -48,7 +57,18 @@ public class ActionButton : MonoBehaviour, IPointerClickHandler
 
 	public void SetUseable(IUseable useable)
 	{
-		this.MyUseable = useable;
+		if (useable is Item)
+		{
+			useables = InventoryScript.MyInstance.GetUseables(useable);
+			useablesCount = useables.Count;
+			InventoryScript.MyInstance.MySourceSlot.MyIcon.color = Color.white;
+			InventoryScript.MyInstance.MySourceSlot = null;
+		}
+		else
+		{
+			this.MyUseable = useable;
+		}
+
 		UpdateVisual();
 	}
 
